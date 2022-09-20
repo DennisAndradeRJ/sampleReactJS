@@ -1,70 +1,65 @@
-# Getting Started with Create React App
+# Getting Started with the sample ReactJS app
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This sample ReactJS app demonstrates how to leverage the ForgeRock platform to register a new user and to login with an existing user without a password. The user will enter the email address, an email will be sent to the the user's inbox and the user will complete their registration or login process by clicking on the link.
 
-## Available Scripts
+## Pre-requisites to run this sample
 
-In the project directory, you can run:
+Those are the pre-requisites to run this sample
 
-### `npm start`
+### ForgeRock Platform Setup
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Configure [email for self-service]
+- Configure a `Decision node script for authentication trees` like the following:
+```
+var objectAttributes = sharedState.get("objectAttributes");
+var mail = sharedState.get("objectAttributes").get("mail");
+var username = sharedState.get("objectAttributes").get("mail");
+var id = sharedState.get("objectAttributes").get("_id");
+objectAttributes.put("mail",mail);
+objectAttributes.put("userName",username);
+objectAttributes.put("sn"," ");
+objectAttributes.put("givenName"," ");
+sharedState.put("username",mail);
+sharedState.put("objectAttributes",objectAttributes);
+outcome = "true";
+``` 
+- Create a new email template called `Login` and change the fields as you desire. This is the text that will be sent in the subject and body of the email sent to the user
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Configure the `LoginEmail` journey:
 
-### `npm test`
+![Alt text](/images/LoginEmail.png "LoginEmail")
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Set the `Attributes to Collect` and `Identity Attribute` fields in `attribute collector node` to `mail`
+Set the `Email Template Name` in the `Email Suspend Node` to the newly created template `login`. note the lower case `l` in the same. It didn't work for me when I set the make as `Login`
+Set the `Identifier` and `Identity Attribute` fields in the `Identify Existing User` to `mail`
 
-### `npm run build`
+- Configure the `RegisterEmail` journey:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![Alt text](/images/RegisterEmail.png "RegisterEmail")
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Set the `Attributes to Collect` to `mail`, and `Identity Attribute` to `userName` and check the `All Attributes Required` field in `attribute collector node`
+Set the `Scripted Decision node` to the script created in the step above. And the `Outcomes` to `true`
+Leave all other nodes unchanged
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Open the AM native admin console and navigate to `Authentication -> Settings -> General -> External Login Page URL` and set this field to `http://localhost:3000/journeywebservice`. This is the base URL that ForgeRock will use to build the link in the email.
 
-### `npm run eject`
+### SMTP server
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Make sure you have an SMTP server available so ForgeRock can send email to the users. I used [MailHog] in my lab for testing purposes.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Running the sample
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Clone the repo
+- Change the ForgeRock base URL to point to your ForgeRock platform server in `src/api/forgerockApi.js`
+```sh
+ baseURL: 'https://iam.example.com/am'
+```
+- Make sure the journey's name are configured as `RegisterEmail` and `LoginEmail`. If you have configured with a different name, you will have to change the constants in the following files: `src/Login.js` and `src/Register.js`
+- On the root directory of this sample app, run the following command to start the development server:
+```sh
+ npm start
+```
+- In a browser, navigate to `http://localhost:3000/login`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[email for self-service]: <https://backstage.forgerock.com/docs/platform/7.2/platform-self-service/platform-configuration.html#email>
+[MailHog]: <https://github.com/mailhog/MailHog>
