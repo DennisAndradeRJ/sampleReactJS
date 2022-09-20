@@ -27,7 +27,7 @@ outcome = "true";
 
 - Configure the `LoginEmail` journey:
 
-![Alt text](/images/LoginEmail.png "LoginEmail")
+![LoginEmail](images/LoginEmail.png "LoginEmail")
 
 Set the `Attributes to Collect` and `Identity Attribute` fields in `attribute collector node` to `mail`
 Set the `Email Template Name` in the `Email Suspend Node` to the newly created template `login`. note the lower case `l` in the same. It didn't work for me when I set the make as `Login`
@@ -35,7 +35,7 @@ Set the `Identifier` and `Identity Attribute` fields in the `Identify Existing U
 
 - Configure the `RegisterEmail` journey:
 
-![Alt text](/images/RegisterEmail.png "RegisterEmail")
+![RegisterEmail](images/RegisterEmail.png "RegisterEmail")
 
 Set the `Attributes to Collect` to `mail`, and `Identity Attribute` to `userName` and check the `All Attributes Required` field in `attribute collector node`
 Set the `Scripted Decision node` to the script created in the step above. And the `Outcomes` to `true`
