@@ -49,7 +49,7 @@ Make sure you have an SMTP server available so ForgeRock can send email to the u
 
 ## Running the sample
 
-- Clone the repo
+- Clone the [repo]
 - Change the ForgeRock base URL to point to your ForgeRock platform server in `src/api/forgerockApi.js`
 ```sh
  baseURL: 'https://iam.example.com/am'
@@ -63,3 +63,4 @@ Make sure you have an SMTP server available so ForgeRock can send email to the u
 
 [email for self-service]: <https://backstage.forgerock.com/docs/platform/7.2/platform-self-service/platform-configuration.html#email>
 [MailHog]: <https://github.com/mailhog/MailHog>
+[repo]: <https://github.com/DennisAndradeRJ/sampleReactJS>
