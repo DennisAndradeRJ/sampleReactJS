@@ -1,14 +1,14 @@
 import { useRef, useState, useEffect } from 'react';
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import forgerockApi from "./api/forgerockApi";
+import forgerockApi from "./api/amApi";
 import { Link } from "react-router-dom";
 
 const EMAIL_REGEX = /^(.+)@(.+)$/;
-const LOGIN_URL = "/json/realms/root/authenticate?authIndexType=service&authIndexValue=LoginEmail";
+const LOGIN_URL = "/json/realms/root/authenticate?authIndexType=service&authIndexValue=InitMagicLink";
 
 
-const Login = () => {
+const AMLogin = () => {
     const emailRef = useRef();
     const errRef = useRef();
 
@@ -58,13 +58,18 @@ const Login = () => {
                         }
                     }
                 );
-                const tokenId = response2?.data?.callbacks[0].output[0].value;
-                setEmailAddress('');
-                setSuccessMsg(response2.data.callbacks[0].output[0].value);
-                setSuccess(true);
+                
             } catch (err2) {
-                setErrMsg (err2);
-            }
+                // We are always going to hit the error because the tree ends in failure. So a 401 is the expected response we are looking for
+                if (err2.response?.status === 401) {
+                    setEmailAddress('');
+                    setSuccessMsg(err2.response.data.message);
+                    setSuccess(true);
+                // We want to log any other error
+                } else {
+                    setErrMsg (err2);
+                }
+            } 
                   
         } catch (err) {
             if (!err?.response) {
@@ -93,13 +98,13 @@ const Login = () => {
                     `}
                 </style>
                     <p className="linkStyle"> 
-                    <Link to="/login">Go Home</Link>                
+                        <Link to="/">Go Home</Link>                
                     </p>
                 </section>
             ) : (
                 <section>
                     <p ref={errRef} className={errRef ? "errMsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-                    <h1>Login</h1>
+                    <h1>AM Login</h1>
                     <form onSubmit={handleSubmit}>
                         <label htmlFor="emailAddress">
                             Email Address:
@@ -132,7 +137,7 @@ const Login = () => {
                     <p>
                         Need an Account? <br />
                         <span className="line">
-                            <Link to="/register">Register</Link>                
+                            <Link to="/idmregister">Register</Link>                
                         </span>
                     </p>
                 </section>
@@ -141,4 +146,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default AMLogin

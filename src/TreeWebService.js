@@ -1,10 +1,10 @@
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from "react";
-import forgerockApi from "./api/platformApi";
+import forgerockApi from "./api/amApi";
 
-const COMPLETE_URL = "/json/realms/root/authenticate?suspendedId=";
+const COMPLETE_URL = "/json/realms/root/authenticate?authIndexType=service&authIndexValue=CheckMagicLink&token=";
 
-const JourneyWebService = () => {
+const TreeWebService = () => {
     const { search }  = useLocation();
 
     const [userEmail, setUserEmail] = useState('');
@@ -14,17 +14,17 @@ const JourneyWebService = () => {
     const [successMsg, setSuccessMsg] = useState('');
 
     const uriParams = new URLSearchParams(search);
-    const suspendedId = uriParams.get('suspendedId');    // SuspendedId to use in the next API call to ForgeRock and continue the tree
-    const url = `${COMPLETE_URL}${suspendedId}`
-    const journeyName = uriParams.get('authIndexValue');
+    const tokenId = uriParams.get('token');    // Magic Link token to use in the next API call to AM to check the token and user
+    const username = uriParams.get('username');   // Get the username from the URI
+    const url = `${COMPLETE_URL}${tokenId}&username=${username}`
 
     // We are handling both registration and login with the same function. We could however handle them separately if needed. All we need to do is to parse the URI parameter
     // from the email link with the URLSearchParams (see above for the suspendedId) and do an if statement inside this useEffect to call 2 functions separately.
     useEffect(() => {
-        handleSuspendedJourney();
+        handleSuspendedTree();
     }, [])
 
-    const handleSuspendedJourney = async () => {
+    const handleSuspendedTree = async () => {
         try {
             const response = await forgerockApi.post(url, null,
                 {
@@ -37,11 +37,8 @@ const JourneyWebService = () => {
             setUserEmail('');
             setTokenIdMsg(response.data.tokenId);
             setSuccess(true);
-            if (journeyName === "LoginEmail") {
-                setSuccessMsg('Login Successful!');
-            } else {
-                setSuccessMsg('Registration completed successfuly!');
-            }
+            setSuccessMsg('Login Successful!');
+            
         } catch (err) {
             setSuccess(false);
             if (!err?.response) {
@@ -49,7 +46,7 @@ const JourneyWebService = () => {
             } else if (err.response?.status === 400) {
                 setErrMsg('Missing Information');
             } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
+                setErrMsg('Unauthorized: User does not exist or link has expired');
             } else {
                 setErrMsg('Login Failed');
             }
@@ -90,4 +87,4 @@ const JourneyWebService = () => {
 
 }
 
-export default JourneyWebService
+export default TreeWebService

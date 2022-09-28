@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import forgerockApi from "./api/forgerockApi";
+import forgerockApi from "./api/platformApi";
 import { Link } from "react-router-dom";
 
 
@@ -104,7 +104,7 @@ const Register = () => {
         ) : (
         <section>
             <p ref={errRef} className={errRef ? "errMsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-            <h1>Register</h1>
+            <h1>Platform Register</h1>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="emailAddress">
                     Email Address:
