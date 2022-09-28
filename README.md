@@ -295,6 +295,8 @@ Make sure you have an SMTP server available so ForgeRock can send email to the u
 ```
 - In a browser, navigate to `http://localhost:3000/`
 
+Credits: The AM trees we designed based on this article with a few changes to avoid using the marketplace nodes: https://stephane-orluc.medium.com/magic-links-with-forgerock-access-management-c2fb9a8190ea
+
 [email for self-service]: <https://backstage.forgerock.com/docs/platform/7.2/platform-self-service/platform-configuration.html#email>
 [MailHog]: <https://github.com/mailhog/MailHog>
 [repo]: <https://github.com/DennisAndradeRJ/sampleReactJS>
