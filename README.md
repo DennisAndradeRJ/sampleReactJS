@@ -271,7 +271,7 @@ if (magicToken==sharedState.get("token")){
 ``` 
 - Configure the `CheckMagicLink` tree.
 
-![CheckMagicLink](https://github.com/DennisAndradeRJ/sampleReactJS/blob/main/src/images/CheckMagicLink.png "CheckMagicLink")
+![CheckMagicLink](https://github.com/DennisAndradeRJ/sampleReactJS/blob/main/src/images/checkMagicLink.png "CheckMagicLink")
 
 - Make sure cors is setup properly in AM by adding the react app's URL to your cors configuration under `Configure -> global Services -> CORS Service -> Secondary Configurations`.
 
